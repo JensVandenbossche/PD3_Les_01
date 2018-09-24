@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-//require components, best ook een klasse met alle scripts die op een component moeten
 //[RequireComponent(typeof(CharacterController))]
-
 public class CharacterControllerBehaviour : MonoBehaviour {
 
     private CharacterController _characterController;
+    private Vector3 _velocity = Vector3.zero; //[m/s]
 
-	void Start ()
+
+    void Start ()
     {
         _characterController = GetComponent<CharacterController>(); //meestal deze gebruiken
 
@@ -18,14 +18,20 @@ public class CharacterControllerBehaviour : MonoBehaviour {
         Assert.IsNotNull(_characterController, "DEPENCANDY ERROR: CharacterControllerBehaviour needs a CharacterController Component");
 
         //if (_characterController == null)
-        //{
         //    Debug.LogError("DEPENDANCY ERROR: CharacterControllerBehaviour needs a CharacterController Component");
-        //}
 #endif
     }
 	
 	void Update ()
     {
-		
+        if (!_characterController.isGrounded)
+        {
+            //velocity needs to change overtime
+            _velocity += Physics.gravity * Time.deltaTime;
+        }
+        
+        Vector3 movement = _velocity * Time.deltaTime;
+
+        _characterController.Move(movement);
 	}
 }
